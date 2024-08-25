@@ -1,12 +1,9 @@
-import 'package:flutter/services.dart';
-import 'package:flutter_openim_sdk/flutter_openim_sdk.dart';
+import 'package:flutter_openim_sdk/src/openim_platform_interface.dart';
 
 class OpenIM {
   static const version = '3.8.1-rc.0';
 
-  static const _channel = const MethodChannel('flutter_openim_sdk');
-
-  static final iMManager = IMManager(_channel);
+  static final iMManager = OpenIMPlatform.instance.iMManager;
 
   OpenIM._();
 }

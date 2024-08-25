@@ -1,25 +1,12 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_openim_sdk/flutter_openim_sdk.dart';
 
-class MessageManager {
-  MethodChannel _channel;
-
+abstract class MessageManager {
   OnMsgSendProgressListener? msgSendProgressListener;
   late OnAdvancedMsgListener msgListener;
   OnCustomBusinessListener? customBusinessListener;
 
-  MessageManager(this._channel);
-
   /// Message listener
-  Future setAdvancedMsgListener(OnAdvancedMsgListener listener) {
-    this.msgListener = listener;
-    // advancedMsgListeners.add(listener);
-    return _channel.invokeMethod(
-        'setAdvancedMsgListener',
-        _buildParam({
-          'id': listener.id,
-        }));
-  }
+  Future setAdvancedMsgListener(OnAdvancedMsgListener listener);
 
   /// Message send progress listener
   void setMsgSendProgressListener(OnMsgSendProgressListener listener) {
@@ -38,19 +25,7 @@ class MessageManager {
     String? groupID,
     bool isOnlineOnly = false,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'sendMessage',
-              _buildParam({
-                'message': message.toJson(),
-                'offlinePushInfo': offlinePushInfo.toJson(),
-                'userID': userID ?? '',
-                'groupID': groupID ?? '',
-                'isOnlineOnly': isOnlineOnly,
-                'operationID': Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Delete a message from local storage
   /// [message] Message to be deleted
@@ -58,14 +33,7 @@ class MessageManager {
     required String conversationID,
     required String clientMsgID,
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'deleteMessageFromLocalStorage',
-          _buildParam({
-            "conversationID": conversationID,
-            "clientMsgID": clientMsgID,
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// core-sdk: DeleteMessage
   /// Delete a specified message from local and server
@@ -74,34 +42,17 @@ class MessageManager {
     required String conversationID,
     required String clientMsgID,
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'deleteMessageFromLocalAndSvr',
-          _buildParam({
-            "conversationID": conversationID,
-            "clientMsgID": clientMsgID,
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// Delete all local chat records
   Future<dynamic> deleteAllMsgFromLocal({
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'deleteAllMsgFromLocal',
-          _buildParam({
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// Delete all chat records from local and server
   Future<dynamic> deleteAllMsgFromLocalAndSvr({
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'deleteAllMsgFromLocalAndSvr',
-          _buildParam({
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// Insert a single chat message into local storage
   /// [receiverID] Receiver's ID
@@ -112,17 +63,7 @@ class MessageManager {
     String? senderID,
     Message? message,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'insertSingleMessageToLocalStorage',
-              _buildParam({
-                "message": message?.toJson(),
-                "receiverID": receiverID,
-                "senderID": senderID,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Insert a group chat message into local storage
   /// [groupID] Group ID
@@ -133,17 +74,7 @@ class MessageManager {
     String? senderID,
     Message? message,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'insertGroupMessageToLocalStorage',
-              _buildParam({
-                "message": message?.toJson(),
-                "groupID": groupID,
-                "senderID": senderID,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Typing status update
   /// [msgTip] Custom content
@@ -151,28 +82,13 @@ class MessageManager {
     required String userID,
     String? msgTip,
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'typingStatusUpdate',
-          _buildParam({
-            "msgTip": msgTip,
-            "userID": userID,
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// Create a text message
   Future<Message> createTextMessage({
     required String text,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createTextMessage',
-              _buildParam({
-                'text': text,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create an @ message
   /// [text] Input content
@@ -185,51 +101,21 @@ class MessageManager {
     List<AtUserInfo> atUserInfoList = const [],
     Message? quoteMessage,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createTextAtMessage',
-            _buildParam({
-              'text': text,
-              'atUserIDList': atUserIDList,
-              'atUserInfoList': atUserInfoList.map((e) => e.toJson()).toList(),
-              'quoteMessage': quoteMessage?.toJson(),
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create an image message
   /// [imagePath] Path
   Future<Message> createImageMessage({
     required String imagePath,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createImageMessage',
-            _buildParam({
-              'imagePath': imagePath,
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create an image message from a full path
   /// [imagePath] Path
   Future<Message> createImageMessageFromFullPath({
     required String imagePath,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createImageMessageFromFullPath',
-            _buildParam({
-              'imagePath': imagePath,
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a sound message
   /// [soundPath] Path
@@ -238,17 +124,7 @@ class MessageManager {
     required String soundPath,
     required int duration,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createSoundMessage',
-            _buildParam({
-              'soundPath': soundPath,
-              "duration": duration,
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a sound message from a full path
   /// [soundPath] Path
@@ -257,17 +133,7 @@ class MessageManager {
     required String soundPath,
     required int duration,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createSoundMessageFromFullPath',
-            _buildParam({
-              'soundPath': soundPath,
-              "duration": duration,
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a video message
   /// [videoPath] Path
@@ -280,18 +146,7 @@ class MessageManager {
     required int duration,
     required String snapshotPath,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createVideoMessage',
-              _buildParam({
-                'videoPath': videoPath,
-                'videoType': videoType,
-                'duration': duration,
-                'snapshotPath': snapshotPath,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a video message from a full path
   /// [videoPath] Path
@@ -304,18 +159,7 @@ class MessageManager {
     required int duration,
     required String snapshotPath,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createVideoMessageFromFullPath',
-              _buildParam({
-                'videoPath': videoPath,
-                'videoType': videoType,
-                'duration': duration,
-                'snapshotPath': snapshotPath,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a file message
   /// [filePath] Path
@@ -324,17 +168,7 @@ class MessageManager {
     required String filePath,
     required String fileName,
     String? operationID,
-  }) {
-    return _channel
-        .invokeMethod(
-            'createFileMessage',
-            _buildParam({
-              'filePath': filePath,
-              'fileName': fileName,
-              "operationID": Utils.checkOperationID(operationID),
-            }))
-        .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
-  }
+  });
 
   /// Create a file message from a full path
   /// [filePath] Path
@@ -343,16 +177,7 @@ class MessageManager {
     required String filePath,
     required String fileName,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createFileMessageFromFullPath',
-              _buildParam({
-                'filePath': filePath,
-                'fileName': fileName,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a merged message
   /// [messageList] Selected messages
@@ -363,33 +188,14 @@ class MessageManager {
     required String title,
     required List<String> summaryList,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createMergerMessage',
-              _buildParam({
-                'messageList': messageList.map((e) => e.toJson()).toList(),
-                'title': title,
-                'summaryList': summaryList,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a forwarded message
   /// [message] Message to be forwarded
   Future<Message> createForwardMessage({
     required Message message,
     String? operationID,
-  }) {
-    return _channel
-        .invokeMethod(
-            'createForwardMessage',
-            _buildParam({
-              'message': message.toJson(),
-              "operationID": Utils.checkOperationID(operationID),
-            }))
-        .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
-  }
+  });
 
   /// Create a location message
   /// [latitude] Latitude
@@ -400,17 +206,7 @@ class MessageManager {
     required double longitude,
     required String description,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createLocationMessage',
-              _buildParam({
-                'latitude': latitude,
-                'longitude': longitude,
-                'description': description,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a custom message
   /// [data] Custom data
@@ -421,17 +217,7 @@ class MessageManager {
     required String extension,
     required String description,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createCustomMessage',
-              _buildParam({
-                'data': data,
-                'extension': extension,
-                'description': description,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a quoted message
   /// [text] Reply content
@@ -440,16 +226,7 @@ class MessageManager {
     required String text,
     required Message quoteMsg,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createQuoteMessage',
-              _buildParam({
-                'quoteText': text,
-                'quoteMessage': quoteMsg.toJson(),
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a card message
   /// [data] Custom data
@@ -459,20 +236,7 @@ class MessageManager {
     String? faceURL,
     String? ex,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createCardMessage',
-              _buildParam({
-                'cardMessage': {
-                  'userID': userID,
-                  'nickname': nickname,
-                  'faceURL': faceURL,
-                  'ex': ex,
-                },
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a custom emoji message
   /// [index] Positional emoji, matched based on index
@@ -481,16 +245,7 @@ class MessageManager {
     int index = -1,
     String? data,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createFaceMessage',
-              _buildParam({
-                'index': index,
-                'data': data,
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Search messages
   /// [conversationID] Query based on conversation, pass null for global search
@@ -513,25 +268,7 @@ class MessageManager {
     int pageIndex = 1,
     int count = 40,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'searchLocalMessages',
-              _buildParam({
-                'filter': {
-                  'conversationID': conversationID,
-                  'keywordList': keywordList,
-                  'keywordListMatchType': keywordListMatchType,
-                  'senderUserIDList': senderUserIDList,
-                  'messageTypeList': messageTypeList,
-                  'searchTimePosition': searchTimePosition,
-                  'searchTimePeriod': searchTimePeriod,
-                  'pageIndex': pageIndex,
-                  'count': count,
-                },
-                'operationID': Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => SearchResult.fromJson(map)));
+  });
 
   /// Revoke a message
   /// [message] The message to be revoked
@@ -539,14 +276,7 @@ class MessageManager {
     required String conversationID,
     required String clientMsgID,
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'revokeMessage',
-          _buildParam({
-            'conversationID': conversationID,
-            'clientMsgID': clientMsgID,
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// Mark messages as read
   /// [conversationID] Conversation ID
@@ -555,14 +285,7 @@ class MessageManager {
     required String conversationID,
     required List<String> messageIDList,
     String? operationID,
-  }) =>
-      _channel.invokeMethod(
-          'markMessagesAsReadByMsgID',
-          _buildParam({
-            "conversationID": conversationID,
-            "messageIDList": messageIDList,
-            "operationID": Utils.checkOperationID(operationID),
-          }));
+  });
 
   /// Get chat history (messages prior to startMsg)
   /// [conversationID] Conversation ID, can be used for querying notifications
@@ -575,18 +298,7 @@ class MessageManager {
     int? lastMinSeq,
     int? count,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'getAdvancedHistoryMessageList',
-              _buildParam({
-                'conversationID': conversationID ?? '',
-                'startClientMsgID': startMsg?.clientMsgID ?? '',
-                'count': count ?? 40,
-                'lastMinSeq': lastMinSeq ?? 0,
-                'operationID': Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => AdvancedMessage.fromJson(map)));
+  });
 
   /// Get chat history (newly received chat history after startMsg). Used for locating a specific message in global search and then fetching messages received after that message.
   /// [conversationID] Conversation ID, can be used for querying notifications
@@ -598,18 +310,7 @@ class MessageManager {
     int? lastMinSeq,
     int? count,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'getAdvancedHistoryMessageListReverse',
-              _buildParam({
-                'conversationID': conversationID ?? '',
-                'startClientMsgID': startMsg?.clientMsgID ?? '',
-                'count': count ?? 40,
-                'lastMinSeq': lastMinSeq ?? 0,
-                'operationID': Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => AdvancedMessage.fromJson(map)));
+  });
 
   /// Find message details
   /// [conversationID] Conversation ID
@@ -617,15 +318,7 @@ class MessageManager {
   Future<SearchResult> findMessageList({
     required List<SearchParams> searchParams,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'findMessageList',
-              _buildParam({
-                'searchParams': searchParams.map((e) => e.toJson()).toList(),
-                'operationID': Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => SearchResult.fromJson(map)));
+  });
 
   /// Rich text message
   /// [text] Input content
@@ -634,17 +327,7 @@ class MessageManager {
     required String text,
     List<RichMessageInfo> list = const [],
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createAdvancedTextMessage',
-            _buildParam({
-              'text': text,
-              'richMessageInfoList': list.map((e) => e.toJson()).toList(),
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Rich text message with quote
   /// [text] Content for the reply
@@ -655,17 +338,7 @@ class MessageManager {
     required Message quoteMsg,
     List<RichMessageInfo> list = const [],
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createAdvancedQuoteMessage',
-              _buildParam({
-                'quoteText': text,
-                'quoteMessage': quoteMsg.toJson(),
-                'richMessageInfoList': list.map((e) => e.toJson()).toList(),
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Send a message
   /// [message] Message body [createImageMessageByURL],[createSoundMessageByURL],[createVideoMessageByURL],[createFileMessageByURL]
@@ -679,19 +352,7 @@ class MessageManager {
     String? groupID,
     bool isOnlineOnly = false,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'sendMessageNotOss',
-              _buildParam({
-                'message': message.toJson(),
-                'offlinePushInfo': offlinePushInfo.toJson(),
-                'userID': userID ?? '',
-                'groupID': groupID ?? '',
-                'isOnlineOnly': isOnlineOnly,
-                'operationID': Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create an image message by URL
   Future<Message> createImageMessageByURL({
@@ -700,99 +361,37 @@ class MessageManager {
     required PictureInfo snapshotPicture,
     String? sourcePath,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createImageMessageByURL',
-            _buildParam({
-              'sourcePath': sourcePath,
-              'sourcePicture': sourcePicture.toJson(),
-              'bigPicture': bigPicture.toJson(),
-              'snapshotPicture': snapshotPicture.toJson(),
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a sound message
   Future<Message> createSoundMessageByURL({
     required SoundElem soundElem,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-            'createSoundMessageByURL',
-            _buildParam({
-              'soundElem': soundElem.toJson(),
-              "operationID": Utils.checkOperationID(operationID),
-            }),
-          )
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a video message
   Future<Message> createVideoMessageByURL({
     required VideoElem videoElem,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createVideoMessageByURL',
-              _buildParam({
-                'videoElem': videoElem.toJson(),
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   /// Create a file message
   Future<Message> createFileMessageByURL({
     required FileElem fileElem,
     String? operationID,
-  }) =>
-      _channel
-          .invokeMethod(
-              'createFileMessageByURL',
-              _buildParam({
-                'fileElem': fileElem.toJson(),
-                "operationID": Utils.checkOperationID(operationID),
-              }))
-          .then((value) => Utils.toObj(value, (map) => Message.fromJson(map)));
+  });
 
   ///
-  Future setCustomBusinessListener(OnCustomBusinessListener listener) {
-    this.customBusinessListener = listener;
-    return _channel.invokeMethod('setCustomBusinessListener', _buildParam({}));
-  }
-
+  Future setCustomBusinessListener(OnCustomBusinessListener listener);
   Future setMessageLocalEx({
     required String conversationID,
     required String clientMsgID,
     required String localEx,
     String? operationID,
-  }) {
-    return _channel.invokeMethod(
-        'setMessageLocalEx',
-        _buildParam({
-          "conversationID": conversationID,
-          "clientMsgID": clientMsgID,
-          "localEx": localEx,
-          "operationID": Utils.checkOperationID(operationID),
-        }));
-  }
+  });
 
   Future setAppBadge(
     int count, {
     String? operationID,
-  }) {
-    return _channel.invokeMethod(
-        'setAppBadge',
-        _buildParam({
-          'count': count,
-          'operationID': Utils.checkOperationID(operationID),
-        }));
-  }
-
-  static Map _buildParam(Map param) {
-    param["ManagerName"] = "messageManager";
-    return param;
-  }
+  });
 }

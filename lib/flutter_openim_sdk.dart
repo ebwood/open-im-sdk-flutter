@@ -35,5 +35,6 @@ export 'src/models/notification_info.dart';
 export 'src/models/search_info.dart';
 export 'src/models/user_info.dart';
 export 'src/models/input_status_changed_data.dart';
+export 'src/openim_platform_interface.dart';
 export 'src/openim.dart';
 export 'src/utils.dart';

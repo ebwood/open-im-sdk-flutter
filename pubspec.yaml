@@ -11,6 +11,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  web: ^0.5.1
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
@@ -32,6 +36,9 @@ flutter:
         pluginClass: FlutterOpenimSdkPlugin
       ios:
         pluginClass: FlutterOpenimSdkPlugin
+      web:
+        pluginClass: OpenIMWeb
+        fileName: src/openim_web.dart
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
