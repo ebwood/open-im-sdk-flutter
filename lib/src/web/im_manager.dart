@@ -13,19 +13,32 @@ class WebIMManager extends IMManager {
   }
 
   @override
-  Future<bool?> init(InitConfig config, OnConnectListener listener, {String? operationID}) {
+  Future<bool?> init(InitConfig config, OnConnectListener listener,
+      {String? operationID}) {
     // TODO: implement init
     throw UnimplementedError();
   }
 
   @override
-  Future initSDK({required int platformID, required String apiAddr, required String wsAddr, required String dataDir, required OnConnectListener listener, int logLevel = 6, bool isCompression = false, bool isLogStandardOutput = true, String? logFilePath, String? operationID}) {
-    // TODO: implement initSDK
-    throw UnimplementedError();
-  }
+  Future initSDK(
+      {required int platformID,
+      required String apiAddr,
+      required String wsAddr,
+      required String dataDir,
+      required OnConnectListener listener,
+      int logLevel = 6,
+      bool isCompression = false,
+      bool isLogStandardOutput = true,
+      String? logFilePath,
+      String? operationID}) async {}
 
   @override
-  Future<UserInfo> login({required String userID, required String token, String? operationID, Future<UserInfo> Function()? defaultValue, bool checkLoginStatus = true}) {
+  Future<UserInfo> login(
+      {required String userID,
+      required String token,
+      String? operationID,
+      Future<UserInfo> Function()? defaultValue,
+      bool checkLoginStatus = true}) {
     // TODO: implement login
     throw UnimplementedError();
   }
@@ -59,13 +72,22 @@ class WebIMManager extends IMManager {
   }
 
   @override
-  Future updateFcmToken({required String fcmToken, required int expireTime, String? operationID}) {
+  Future updateFcmToken(
+      {required String fcmToken,
+      required int expireTime,
+      String? operationID}) {
     // TODO: implement updateFcmToken
     throw UnimplementedError();
   }
 
   @override
-  Future uploadFile({required String id, required String filePath, required String fileName, String? contentType, String? cause, String? operationID}) {
+  Future uploadFile(
+      {required String id,
+      required String filePath,
+      required String fileName,
+      String? contentType,
+      String? cause,
+      String? operationID}) {
     // TODO: implement uploadFile
     throw UnimplementedError();
   }

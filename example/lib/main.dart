@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_openim_sdk/flutter_openim_sdk.dart';
 
+import 'web_interop.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -14,7 +16,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    OpenIM.iMManager.initSDK(platformID: 1, apiAddr: '', wsAddr: '', dataDir: '/', listener: OnConnectListener());
+    OpenIM.iMManager.initSDK(
+        platformID: 1,
+        apiAddr: '',
+        wsAddr: '',
+        dataDir: '/',
+        listener: OnConnectListener());
   }
 
   @override
@@ -26,7 +33,11 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
-            TextButton(onPressed: () {}, child: Text('login')),
+            TextButton(
+                onPressed: () {
+                  callLogin();
+                },
+                child: Text('login')),
           ],
         ),
       ),
